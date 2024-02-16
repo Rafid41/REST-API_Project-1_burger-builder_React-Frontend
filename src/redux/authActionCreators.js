@@ -35,43 +35,36 @@ export const auth = (email, password, mode) => (dispatch) => {
     const authData = {
         email: email,
         password: password,
-        returnSecureToken: true, // for firebase structure
     };
-    // VVI NOTE:FIREBASE weak/common/repeating character pass dle bad request ashe and request send hyna
 
+    // connecting with django backend
     let authUrl = null;
     if (mode === "Sign Up") {
-        authUrl =
-            "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
+        authUrl = "http://localhost:8000/api/users/";
     } else {
-        authUrl =
-            "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=";
+        authUrl = "http://localhost:8000/api/token/";
     }
-    // post link collected from: https://firebase.google.com/docs/reference/rest/auth
-    // this is default link for post
-    // API key from Firebase -> settings -> project settings-> web API Key
-    const API_KEY = "AIzaSyDN2gmwm58m8nJ7ayGgaUK5LD1JQwc2AOw";
+
     axios
-        .post(authUrl + API_KEY, authData)
+        .post(authUrl, authData)
         .then((response) => {
             dispatch(authLoading(false));
-            // set token in browsers local storage
-            localStorage.setItem("token", response.data.idToken);
-            localStorage.setItem("userId", response.data.localId);
+            console.log(response);
+            // localStorage.setItem("token", response.data.idToken);
+            // localStorage.setItem("userId", response.data.localId);
+            // const expirationTime = new Date(
+            //     new Date().getTime() + response.data.expiresIn * 1000
+            // );
+            // localStorage.setItem("expirationTime", expirationTime);
 
-            // new Date().getTime() return kore current time in milliseconds
-            // response.data.expiresIn return kore second e, tai 1000 multiply kora hoise
-            // eta abar Date e convert hbe
-            const expirationTime = new Date(
-                new Date().getTime() + response.data.expiresIn * 1000
-            );
-            localStorage.setItem("expirationTime", expirationTime);
-
-            dispatch(authSuccess(response.data.idToken, response.data.localId));
+            // dispatch(authSuccess(response.data.idToken, response.data.localId));
         })
         .catch((err) => {
             dispatch(authLoading(false));
-            dispatch(authFailed(err.response.data.error.message));
+            // taking first key of error message
+            const key = Object.keys(err.response.data)[0];
+            const errorValue = err.response.data[key];
+            dispatch(authFailed(errorValue));
         });
 };
 
