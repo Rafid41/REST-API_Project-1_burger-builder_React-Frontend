@@ -47,8 +47,16 @@ export const orderedLoadFailed = () => {
 // firebase auth token for secure viewing order history
 export const fetchOrders = (token, userId) => (dispatch) => {
     // fetch from django server
+
+    // for authenticate user orders for django server
+    const header = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
     axios
-        .get(`http://127.0.0.1:8000/api/orders/?id=${userId}`)
+        .get(`http://127.0.0.1:8000/api/orders/`, header)
         .then((response) => {
             //load order to redux
             dispatch(loadOrders(response.data));
