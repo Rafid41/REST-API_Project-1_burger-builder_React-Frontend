@@ -1,6 +1,7 @@
 // src\redux\authActionCreators.js
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 //  eta dispatch hbe jokhn kono response ashbe firebase theke, means login/signUp hole
 //  nicher auth fn theke dis[atch hye kehane ashbe, erpor reducer.js e jabe]
@@ -49,15 +50,17 @@ export const auth = (email, password, mode) => (dispatch) => {
         .post(authUrl, authData)
         .then((response) => {
             dispatch(authLoading(false));
-            console.log(response);
-            // localStorage.setItem("token", response.data.idToken);
-            // localStorage.setItem("userId", response.data.localId);
-            // const expirationTime = new Date(
-            //     new Date().getTime() + response.data.expiresIn * 1000
-            // );
-            // localStorage.setItem("expirationTime", expirationTime);
 
-            // dispatch(authSuccess(response.data.idToken, response.data.localId));
+            // decoding token
+            const token = jwtDecode(response.data.access);
+            // console.log(token);
+            // console.log(response.data.access);
+            localStorage.setItem("token", response.data.access);
+            localStorage.setItem("userId", token.user_id);
+            const expirationTime = new Date(token.exp * 1000);
+            localStorage.setItem("expirationTime", expirationTime);
+
+            dispatch(authSuccess(response.data.access, token.user_id));
         })
         .catch((err) => {
             dispatch(authLoading(false));
