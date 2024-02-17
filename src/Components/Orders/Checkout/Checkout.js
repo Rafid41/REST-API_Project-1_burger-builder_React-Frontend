@@ -40,13 +40,6 @@ class Checkout extends Component {
         modalMsg: "",
     };
 
-    // goBack = () => {
-    //     //error here
-    //     // router_property, router history
-    //     //  this.props.history.goBack("/");
-    //     const { history } = this.props;
-    //     history.push("/");
-    // };
 
     InputChangeHandler = (e) => {
         this.setState({
@@ -59,26 +52,31 @@ class Checkout extends Component {
     };
 
     submitHandler = () => {
-        // show spinner
         this.setState({ isLoading: true });
+        const url = "http://localhost:8000/api/orders/";
 
-        //  ei object darabase(firebase) e jabe
+        // create object same as django json file
+        const ingredients = [...this.props.ingredients];
+        const ingredientsObject = {};
+        for (let single_ingredient in ingredients) {
+            ingredientsObject[single_ingredient.type] =
+                single_ingredient.amount;
+        }
+
         const order = {
-            ingredients: this.props.ingredients,
+            // submitted orders object element_names will be same as django json files
+            ingredients: ingredientsObject,
             customer: this.state.values,
             price: this.props.totalPrice,
             orderTime: new Date(),
-            userId: this.props.userId,
+            user: this.props.userId,
         };
         // axios.post(link + '/key_name.json', target_obeject_name) ekhane key_name=orders
         axios
-            .post(
-                "https://burger-builder-c4947-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json?auth=" +
-                    this.props.token,
-                order
-            )
+            .post(url, order)
             .then((response) => {
-                if (response.status === 200) {
+                // http: 200-> OK, 201-> created
+                if (response.status === 201) {
                     this.setState({
                         isLoading: false,
                         isModalOpen: true,
