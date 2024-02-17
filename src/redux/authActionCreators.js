@@ -30,6 +30,17 @@ export const authFailed = (errMsg) => {
     };
 };
 
+const saveTokenDataAndGetUserID = (access) => {
+    // decoding token
+    const token = jwtDecode(access);
+    localStorage.setItem("token", access);
+    localStorage.setItem("userId", token.user_id);
+    const expirationTime = new Date(token.exp * 1000);
+    localStorage.setItem("expirationTime", expirationTime);
+
+    return token.user_id;
+};
+
 export const auth = (email, password, mode) => (dispatch) => {
     dispatch(authLoading(true)); // true ta payLoad hisebe pass hbe
 
@@ -51,16 +62,20 @@ export const auth = (email, password, mode) => (dispatch) => {
         .then((response) => {
             dispatch(authLoading(false));
 
-            // decoding token
-            const token = jwtDecode(response.data.access);
-            // console.log(token);
-            // console.log(response.data.access);
-            localStorage.setItem("token", response.data.access);
-            localStorage.setItem("userId", token.user_id);
-            const expirationTime = new Date(token.exp * 1000);
-            localStorage.setItem("expirationTime", expirationTime);
-
-            dispatch(authSuccess(response.data.access, token.user_id));
+            if (mode === "Login") {
+                const access = response.data.access;
+                const user_id = saveTokenDataAndGetUserID(access);
+                dispatch(authSuccess(access, user_id));
+            } else {
+                // Sign up
+                return axios
+                    .post("http://localhost:8000/api/token/", authData)
+                    .then((response) => {
+                        const access = response.data.access;
+                        const user_id = saveTokenDataAndGetUserID(access);
+                        dispatch(authSuccess(access, user_id));
+                    });
+            }
         })
         .catch((err) => {
             dispatch(authLoading(false));
