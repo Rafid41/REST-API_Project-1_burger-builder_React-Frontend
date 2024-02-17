@@ -56,7 +56,7 @@ export const fetchOrders = (token, userId) => (dispatch) => {
     };
 
     axios
-        .get(`http://127.0.0.1:8000/api/orders/`, header)
+        .get(`http://127.0.0.1:8000/api/orders/?id=${userId}`, header)
         .then((response) => {
             //load order to redux
             dispatch(loadOrders(response.data));

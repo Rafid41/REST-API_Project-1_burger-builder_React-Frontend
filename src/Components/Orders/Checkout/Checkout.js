@@ -40,7 +40,6 @@ class Checkout extends Component {
         modalMsg: "",
     };
 
-
     InputChangeHandler = (e) => {
         this.setState({
             values: {
@@ -58,9 +57,8 @@ class Checkout extends Component {
         // create object same as django json file
         const ingredients = [...this.props.ingredients];
         const ingredientsObject = {};
-        for (let single_ingredient in ingredients) {
-            ingredientsObject[single_ingredient.type] =
-                single_ingredient.amount;
+        for (let i = 0; i < ingredients.length; i++) {
+            ingredientsObject[ingredients[i].type] = ingredients[i].amount;
         }
 
         const order = {
@@ -71,7 +69,7 @@ class Checkout extends Component {
             orderTime: new Date(),
             user: this.props.userId,
         };
-        // axios.post(link + '/key_name.json', target_obeject_name) ekhane key_name=orders
+
         axios
             .post(url, order)
             .then((response) => {

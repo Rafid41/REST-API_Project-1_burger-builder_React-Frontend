@@ -29,7 +29,7 @@ class Orders extends Component {
         this.props.fetchOrders(this.props.token, this.props.userId);
     }
     componentDidUpdate() {
-        console.log(this.props);
+        // console.log(this.props);
     }
 
     render() {

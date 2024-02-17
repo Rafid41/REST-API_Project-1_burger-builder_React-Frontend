@@ -2,8 +2,10 @@ import React from "react";
 
 const Order = (props) => {
     // convert object to array
+    // console.log(props.order.ingredients)
     const ingredients = [];
     for (let [key, value] of Object.entries(props.order.ingredients)) {
+        if (key === 'id') continue;
         ingredients.push({ type: key, amount: value });
     }
 
