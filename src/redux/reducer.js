@@ -87,13 +87,7 @@ export const reducer = (state = INITIAL_STATE, action) => {
             };
 
         case actionTypes.LOAD_ORDERS:
-            let orders = [];
-            for (let key in action.payload) {
-                orders.push({
-                    ...action.payload[key],
-                    id: key, //eta unique key generate korbe oi order k access korar jnno
-                });
-            }
+            let orders = [...action.payload];
 
             return {
                 ...state,

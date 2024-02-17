@@ -46,13 +46,9 @@ export const orderedLoadFailed = () => {
 // dispatch above 2 fn
 // firebase auth token for secure viewing order history
 export const fetchOrders = (token, userId) => (dispatch) => {
-    //'&orderBy=userId' er 'userId' string firebase database er 'userId' column_name
-    const queryParams = '&orderBy="userId"&equalTo="' + userId + '"';
-    //don't use tabnine here
+    // fetch from django server
     axios
-        .get(
-            'https://burger-builder-c4947-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json?auth=' + token + queryParams
-        )
+        .get(`http://127.0.0.1:8000/api/orders/?id=${userId}`)
         .then((response) => {
             //load order to redux
             dispatch(loadOrders(response.data));

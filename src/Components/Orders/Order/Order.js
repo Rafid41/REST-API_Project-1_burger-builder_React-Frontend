@@ -1,10 +1,13 @@
 import React from "react";
 
 const Order = (props) => {
-    // eta print korle props er full structure dekha jabe
-    // console.log(props)
+    // convert object to array
+    const ingredients = [];
+    for (let [key, value] of Object.entries(props.order.ingredients)) {
+        ingredients.push({ type: key, amount: value });
+    }
 
-    const ingredientSummery = props.order.ingredients.map((item) => {
+    const ingredientSummery = ingredients.map((item) => {
         return (
             <span
                 style={{
